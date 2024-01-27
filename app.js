@@ -6,7 +6,8 @@ const dotenv = require('dotenv')
 const db = require('./src/database/databaseConfig.js')
 dotenv.config();
 const errorHandlerMiddleware = require('./src/middleware/errorsHandler.js')
-
+const mongoSanitize = require('express-mongo-sanitize')
+const limiters = require('./src/middleware/limiterAPI.js')
 
 const app = express();
 app.use(cors())
@@ -26,10 +27,19 @@ app.get("/" ,(req , res) => {
     })
 })
 
+//API Rate Limiter
+app.use('/api' , limiters)
+
+//SQL Injection
+app.use(
+    mongoSanitize({
+      replaceWith: '_',
+    }),
+  );
 
 const router = require('./src/router')
+const limiterapi = require('./src/middleware/limiterAPI.js')
 app.use('/api' , router)
-
 
 //Errors
 app.use(errorHandlerMiddleware)

@@ -39,6 +39,7 @@ const register = async(req , res) => {
     } catch (error) {
         throw new APIError('Kayıt işlemi başarısız', 400)
     }
+    
 
 }
 
