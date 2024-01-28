@@ -34,8 +34,7 @@ const tokenControll = async(req , res , next) => {
         if(err) throw new APIError("Geçersiz Token" , 401)
 
         const userInfo = await userModel.findById(decoded.userID).select("_id , name, lastname , email")
-        console.log(userInfo)
-
+        
         if(!userInfo) throw new APIError("Geçersiz Token" , 401)
 
         req.userInfo = userInfo

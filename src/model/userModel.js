@@ -1,3 +1,4 @@
+const { string } = require('joi')
 const { Timestamp } = require('mongodb')
 const mongoose = require('mongoose')
 
@@ -22,6 +23,16 @@ const userSchema = new mongoose.Schema({
         type : String,
         required : true,
         trim : true
+    },
+    reset : {
+        code : {
+            type : String,
+            default : null
+        },
+        time : {
+            type : String,
+            default : null
+        }
     }
 
 }, {timestamps : true})

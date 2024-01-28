@@ -38,7 +38,6 @@ app.use(
   );
 
 const router = require('./src/router')
-const limiterapi = require('./src/middleware/limiterAPI.js')
 app.use('/api' , router)
 
 //Errors

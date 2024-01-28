@@ -3,6 +3,9 @@ const bcrypt = require('bcrypt')
 const APIError = require('../utils/errors')
 const ResponseError = require('../utils/responseErrors')
 const {tokenCreate }= require('../middleware/token')
+const  crypto = require("crypto")
+const moment = require('moment')
+const sendEmail = require('../utils/sendMail')
 
 const login = async(req , res) => {
     const {email , password} = req.body
@@ -47,8 +50,42 @@ const me = async(req , res) =>{
     return new ResponseError(req.userInfo).success(res)
 }
 
+const forgetPassword = async(req , res) =>{
+    const {email} = req.body;
+
+    const userInfo = await userModel.findOne({email : email}).select("name lastname email")
+
+    if(!userInfo) {
+        throw new APIError('Böyle bir kullanıcı mevcut değildir.' , 400)
+    }
+    console.log("forget Pass Kullanıcı  :" , userInfo)
+
+    const resetcode = crypto.randomBytes(3).toString("hex")
+
+    await sendEmail({
+        from : "kadirbabaoglu@outlook.com",
+        to : userInfo.email,
+        subject: "Şifre Sıfırlama Emaili",
+        text : `Şifre Sıfırlama Kodu ${resetcode}`
+    })
+
+    await userModel.updateOne(
+        {email : email},
+        {
+            reset : {
+                code : resetcode,
+                time : moment(new Date()).add(15 , "minute").format("YYYY-MM-DD HH:mm:ss")
+            }
+        }
+    )
+
+    return new ResponseError(true , "Mail kutunuzu kontrol edin").success(res)
+
+}
+
 module.exports = {
     login,
     register,
-    me
+    me,
+    forgetPassword
 }
