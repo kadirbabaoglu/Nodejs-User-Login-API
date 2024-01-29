@@ -2,16 +2,17 @@ const userModel = require('../model/userModel')
 const bcrypt = require('bcrypt')
 const APIError = require('../utils/errors')
 const ResponseError = require('../utils/responseErrors')
-const {tokenCreate }= require('../middleware/token')
+const {tokenCreate, loginControl }= require('../middleware/token')
 const  crypto = require("crypto")
 const moment = require('moment')
 const sendEmail = require('../utils/sendMail')
+
 
 const login = async(req , res) => {
     const {email , password} = req.body
 
     const userInfo = await userModel.findOne({email})
-
+    
     if(!userInfo){
         throw new APIError('Email veya şifre hatalıdır...!' , 401)
     }
@@ -23,6 +24,7 @@ const login = async(req , res) => {
     }
 
     tokenCreate(userInfo , res)
+
 }
 
 const register = async(req , res) => {

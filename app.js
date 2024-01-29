@@ -8,14 +8,20 @@ dotenv.config();
 const errorHandlerMiddleware = require('./src/middleware/errorsHandler.js')
 const mongoSanitize = require('express-mongo-sanitize')
 const limiters = require('./src/middleware/limiterAPI.js')
+var session = require('express-session')
 
 const app = express();
+app.use(session({
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: false
+}));
 app.use(cors())
 
 //Database Area
 db();
 
-
+session.user = {username : "ddd"}
 //Middleware Area
 app.use(bodyParser.json({limit : '30mb' , extended : true}))
 app.use(bodyParser.urlencoded({limit : '30mb' , extended : true}))
